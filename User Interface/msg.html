@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('lik4.jpg') center/cover; /* Adjust 'your-image.jpg' to your actual image file name */
+      overflow: hidden;
+      display: flex;
+      height: 100vh;
+    }
+
+    #userList {
+      width: 20%;
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    #userList a {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    #userList img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    #userList .status {
+      width: 10px;
+      height: 10px;
+      background-color: #5bc0de; /* Light blue, online status */
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    #userList a:hover {
+      background-color: #555;
+    }
+
+    #chatContainer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #chatSymbol {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #5bc0de; /* Light blue */
+      color: #fff;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1;
+      transition: background-color 0.3s;
+    }
+
+    #chatSymbol:hover {
+      background-color: #4cae4c; /* Dark green on hover */
+    }
+
+    #chatBox {
+      width: 300px;
+      height: 500px;
+      background-color: rgba(255, 255, 255, 0.9); /* Transparent white background */
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: none;
+      transform: translateX(-80px);  /* Adjust the left position to 0 */
+      transition: max-width 0.5s, box-shadow 0.3s;
+    }
+
+    #chatBox:hover {
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .chat-header {
+      background-color: #5bc0de; /* Light blue */
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .chat-body {
+      padding: 10px;
+      overflow-y: auto;
+      max-height: 100%;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      overflow: hidden; /* Ensure the message containers do not overflow their parent */
+    }
+
+    .user-message {
+      float: left;
+      clear: both;
+      background-color: #5bc0de; /* Light blue */
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .bot-message {
+      float: right;
+      clear: both;
+      background-color: #e0e0e0;
+      color: #333;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
+
+    .input-container input {
+      flex: 1;
+      padding: 10px;
+      margin-right: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      color: #292b2c; /* Dark text color */
+      background-color: #fff; /* Light background color */
+    }
+
+    .input-container button {
+      background-color: #5bc0de; /* Light blue */
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      outline: none;
+      transition: background-color 0.3s;
+    }
+
+    .input-container button:hover {
+      background-color: #4cae4c; /* Dark green on hover */
+    }
+  </style>
+</head>
+<body>
+
+<div id="userList">
+  <a href="#" onclick="startChat('Likesh')">
+    <img src="likesh.jpeg" alt="Likesh Avatar">
+    <div class="status"></div>
+    Likesh
+  </a>
+  <a href="#" onclick="startChat('Anurag')">
+    <img src="anurag.jpeg" alt="Anurag Avatar">
+    <div class="status"></div>
+    Anurag
+  </a>
+  <a href="#" onclick="startChat('Akanksha')">
+    <img src="akansha.jpeg" alt="Akanksha Avatar">
+    <div class="status"></div>
+    Akanksha
+  </a>
+  <!-- Add more users as needed -->
+</div>
+
+<div id="chatContainer">
+  <div id="chatSymbol" onclick="toggleChat()">+</div>
+
+  <div id="chatBox">
+    <div class="chat-header" id="chatHeader">Chat Box</div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="input-container">
+      <input type="text" id="userInput" placeholder="Type your message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleChat() {
+    const chatBox = document.getElementById("chatBox");
+    chatBox.style.display = chatBox.style.display === "none" ? "block" : "none";
+  }
+
+  function startChat(userName) {
+    const chatHeader = document.getElementById("chatHeader");
+    chatHeader.textContent = `Chat with ${userName}`;
+    toggleChat();
+  }
+
+  function sendMessage() {
+    const userInput = document.getElementById("userInput");
+    const chatBody = document.getElementById("chatBody");
+
+    if (userInput.value.trim() !== "") {
+      // User message
+      const userMessage = document.createElement("div");
+      userMessage.className = "message user-message";
+      userMessage.textContent = "You: " + userInput.value;
+      chatBody.appendChild(userMessage);
+
+      // Clear the input field
+      userInput.value = "";
+
+      // Scroll to the bottom of the chat body
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  }
+</script>
+
+</body>
+</html>
